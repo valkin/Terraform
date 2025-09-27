@@ -35,7 +35,6 @@ resource "aws_instance" "serverTF_1" {
     ami           = "ami-0cfde0ea8edd312d4" #Ubuntu server 24 LTD 2 AMI (HVM), SSD Volume Type
     instance_type = "t2.micro"
     vpc_security_group_ids = [aws_security_group.TerraformRules.id]
-    #subnet_id = data.aws_subnet.az_a.id #specify subnet in availability zone A
 
 
 user_data = <<-EOF
@@ -66,7 +65,6 @@ resource "aws_instance" "serverTF_2" {
     ami           = "ami-0cfde0ea8edd312d4" #Ubuntu server 24 LTD 2 AMI (HVM), SSD Volume Type
     instance_type = "t2.micro"
     vpc_security_group_ids = [aws_security_group.TerraformRules.id]
-    #subnet_id = data.aws_subnet.az_c.id #specify subnet in availability zone C
 
   
 user_data = <<-EOF
@@ -94,46 +92,22 @@ user_data = <<-EOF
 # Define un grupo de seguridad con acceso al puerto 8080
 # ------------------------------------------------------
 resource "aws_security_group" "TerraformRules" {
-    name        = "TerraformRules"
-    description = "Allow HTTP and SSH inbound traffic"
-    vpc_id = data.aws_vpc.default.id
-   
-    ingress {
-        description = "Acceso al puerto 8080 desde el exterior"
-        from_port   = 8080
-        to_port     = 8080
-        protocol    = "tcp"
-        #security_groups = [aws_security_group.alb.id] # Allow access from the ALB security group
-        
-    }
+  name        = "TerraformRules"
+  description = "Allow inbound traffic on port 8080"
+  vpc_id      = data.aws_vpc.default.id
 
-    ingress {
-       from_port   = 443
-       to_port     = 443
-       protocol    = "tcp"
-       #security_groups = [aws_security_group.alb.id] # Allow access from the ALB security group
-
-     }
-
-    ingress {
-        description = "Acceso al puerto 22"
-        from_port   = 22
-        to_port     = 22
-        protocol    = "tcp"
-        #security_groups = [aws_security_group.alb.id] # Allow access from the ALB security group
-
-   }
-
-   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1" # Represents all protocols
-    cidr_blocks = ["0.0.0.0/0"] # Allows traffic to all destinations
+  ingress {
+    description = "Acceso al puerto 8080 desde el exterior"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-     tags = {
-       Name = "web-server-sg"
-
-  
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
