@@ -5,7 +5,6 @@ provider "aws" {
   region = "us-east-2"
   shared_config_files      = ["/home/mduran/.aws/config"]
   shared_credentials_files = ["/home/mduran/.aws/credentials"]
-  profile                  = "default"
 }
 
 # ----------------------------------------------------
